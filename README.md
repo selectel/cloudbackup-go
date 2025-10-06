@@ -37,7 +37,7 @@ func main() {
 	// Token to work with Selectel Cloud project.
 	token := "gAAAAABeVNzu-..."
 
-	// CRaaS endpoint to work with.
+	// Cloud backup endpoint to work with.
 	endpoint := "https://ru-3.cloud.api.selcloud.ru/data-protect/v2/"
 
 	// Create the client.
