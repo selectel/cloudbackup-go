@@ -13,10 +13,16 @@ type (
 		ScheduleType      string          `json:"schedule_type"`
 		Status            string          `json:"status,omitempty"`
 	}
+
 	PlanResource struct {
 		ID   string `json:"id"`
 		Name string `json:"name"`
 		Type string `json:"type"`
+	}
+
+	PlansResponse struct {
+		Plans []*Plan `json:"plans"`
+		Total int     `json:"total"`
 	}
 )
 

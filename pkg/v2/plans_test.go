@@ -10,7 +10,7 @@ import (
 )
 
 func TestServiceClient_Plans(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+	t.Run("SuccessWithQuery", func(t *testing.T) {
 		// Prepare
 		body := `{
 			"plans": [{
@@ -28,40 +28,102 @@ func TestServiceClient_Plans(t *testing.T) {
 					"name": "resource-name-1",
 					"type": "volume"
 				}]
-			}]
+			}],
+			"total": 1
 		}`
 		fakeResp := httptest.NewFakeResponse(200, body) //nolint:bodyclose
 		fakeTransport := httptest.NewFakeTransport(fakeResp, nil)
 		client := newFakeClient("http://fake", fakeTransport)
 
 		// Execute
-		plans, respRes, err := client.Plans(context.Background(), &PlansQuery{Name: "test-plan", VolumeName: "test-volume"})
+		res, respRes, err := client.Plans(context.Background(), &PlansQuery{Name: "test-plan", VolumeName: "test-volume"})
 
 		// Analyse
 		require.NoError(t, err)
 		require.NotNil(t, respRes)
 		require.Equal(t, 200, respRes.StatusCode)
-		wantPlans := []*Plan{
-			{
-				ID:                "plan-id-1",
-				Name:              "test-plan",
-				Description:       "test description",
-				BackupMode:        "full",
-				FullBackupsAmount: 5,
-				SchedulePattern:   "0 0 * * *",
-				ScheduleType:      "cron",
-				Status:            "started",
-				CreatedAt:         "2023-01-01T00:00:00Z",
-				Resources: []*PlanResource{
-					{
-						ID:   "resource-id-1",
-						Name: "resource-name-1",
-						Type: "volume",
+		want := &PlansResponse{
+			Plans: []*Plan{
+				{
+					ID:                "plan-id-1",
+					Name:              "test-plan",
+					Description:       "test description",
+					BackupMode:        "full",
+					FullBackupsAmount: 5,
+					SchedulePattern:   "0 0 * * *",
+					ScheduleType:      "cron",
+					Status:            "started",
+					CreatedAt:         "2023-01-01T00:00:00Z",
+					Resources: []*PlanResource{
+						{
+							ID:   "resource-id-1",
+							Name: "resource-name-1",
+							Type: "volume",
+						},
 					},
 				},
 			},
+			Total: 1,
 		}
-		require.Equal(t, wantPlans, plans)
+		require.Equal(t, want, res)
+	})
+
+	t.Run("SuccessWithoutQuery", func(t *testing.T) {
+		// Prepare
+		body := `{
+			"plans": [{
+				"id": "plan-id-1",
+				"name": "test-plan",
+				"description": "test description",
+				"backup_mode": "full",
+				"full_backups_amount": 5,
+				"schedule_pattern": "0 0 * * *",
+				"schedule_type": "cron",
+				"status": "started",
+				"created_at": "2023-01-01T00:00:00Z",
+				"resources": [{
+					"id": "resource-id-1",
+					"name": "resource-name-1",
+					"type": "volume"
+				}]
+			}],
+			"total": 1
+		}`
+		fakeResp := httptest.NewFakeResponse(200, body) //nolint:bodyclose
+		fakeTransport := httptest.NewFakeTransport(fakeResp, nil)
+		client := newFakeClient("http://fake", fakeTransport)
+
+		// Execute
+		res, respRes, err := client.Plans(context.Background(), nil)
+
+		// Analyse
+		require.NoError(t, err)
+		require.NotNil(t, respRes)
+		require.Equal(t, 200, respRes.StatusCode)
+		want := &PlansResponse{
+			Plans: []*Plan{
+				{
+					ID:                "plan-id-1",
+					Name:              "test-plan",
+					Description:       "test description",
+					BackupMode:        "full",
+					FullBackupsAmount: 5,
+					SchedulePattern:   "0 0 * * *",
+					ScheduleType:      "cron",
+					Status:            "started",
+					CreatedAt:         "2023-01-01T00:00:00Z",
+					Resources: []*PlanResource{
+						{
+							ID:   "resource-id-1",
+							Name: "resource-name-1",
+							Type: "volume",
+						},
+					},
+				},
+			},
+			Total: 1,
+		}
+		require.Equal(t, want, res)
 	})
 
 	t.Run("InvalidJSON", func(t *testing.T) {
@@ -72,11 +134,11 @@ func TestServiceClient_Plans(t *testing.T) {
 		client := newFakeClient("http://fake", fakeTransport)
 
 		// Execute
-		plans, respRes, err := client.Plans(context.Background(), nil)
+		res, respRes, err := client.Plans(context.Background(), nil)
 
 		// Analyse
 		require.Error(t, err)
-		require.Nil(t, plans)
+		require.Nil(t, res)
 		require.NotNil(t, respRes)
 		require.Equal(t, 200, respRes.StatusCode)
 	})
@@ -88,13 +150,13 @@ func TestServiceClient_Plans(t *testing.T) {
 		client := newFakeClient("http://fake", httptest.NewFakeTransport(fakeResp, nil))
 
 		// Execute
-		plans, respRes, err := client.Plans(context.Background(), nil)
+		res, respRes, err := client.Plans(context.Background(), nil)
 
 		// Analyse
 		require.Error(t, err)
 		require.NotNil(t, respRes)
 		require.NotNil(t, respRes.Err)
-		require.Nil(t, plans)
+		require.Nil(t, res)
 		require.EqualError(t, respRes.Err, httpErrorMessage)
 	})
 
@@ -104,11 +166,11 @@ func TestServiceClient_Plans(t *testing.T) {
 		client := newFakeClient("http://fake", fakeTransport)
 
 		// Execute
-		plans, respRes, err := client.Plans(context.Background(), nil)
+		res, respRes, err := client.Plans(context.Background(), nil)
 
 		// Analyse
 		require.Error(t, err)
-		require.Nil(t, plans)
+		require.Nil(t, res)
 		require.Nil(t, respRes)
 	})
 }

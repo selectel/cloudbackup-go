@@ -31,7 +31,7 @@ func (q *PlansQuery) queryParamsRaw() string {
 	return params.Encode()
 }
 
-func (client *ServiceClient) Plans(ctx context.Context, q *PlansQuery) ([]*Plan, *ResponseResult, error) {
+func (client *ServiceClient) Plans(ctx context.Context, q *PlansQuery) (*PlansResponse, *ResponseResult, error) {
 	queryParams := ""
 	if qRaw := q.queryParamsRaw(); q != nil && qRaw != "" {
 		queryParams = "?" + qRaw
@@ -47,15 +47,13 @@ func (client *ServiceClient) Plans(ctx context.Context, q *PlansQuery) ([]*Plan,
 		return nil, responseResult, responseResult.Err
 	}
 
-	var result struct {
-		Plans []*Plan `json:"plans"`
-	}
+	result := PlansResponse{}
 	err = responseResult.ExtractResult(&result)
 	if err != nil {
 		return nil, responseResult, err
 	}
 
-	return result.Plans, responseResult, nil
+	return &result, responseResult, nil
 }
 
 func (client *ServiceClient) Plan(ctx context.Context, planID string) (*Plan, *ResponseResult, error) {
