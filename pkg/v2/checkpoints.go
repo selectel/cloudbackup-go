@@ -38,6 +38,11 @@ type (
 		PlanName   string
 		VolumeName string
 	}
+
+	CheckpointsResponse struct {
+		Checkpoints []*Checkpoint `json:"checkpoints"`
+		Total       int           `json:"total"`
+	}
 )
 
 func (q *CheckpointsQuery) queryParamsRaw() string {
@@ -57,7 +62,7 @@ func (q *CheckpointsQuery) queryParamsRaw() string {
 	return params.Encode()
 }
 
-func (client *ServiceClient) Checkpoints(ctx context.Context, q *CheckpointsQuery) ([]*Checkpoint, *ResponseResult, error) {
+func (client *ServiceClient) Checkpoints(ctx context.Context, q *CheckpointsQuery) (*CheckpointsResponse, *ResponseResult, error) {
 	queryParams := ""
 	if qRaw := q.queryParamsRaw(); q != nil && qRaw != "" {
 		queryParams = "?" + qRaw
@@ -73,13 +78,11 @@ func (client *ServiceClient) Checkpoints(ctx context.Context, q *CheckpointsQuer
 		return nil, responseResult, responseResult.Err
 	}
 
-	var result struct {
-		Result []*Checkpoint `json:"checkpoints"`
-	}
-	err = responseResult.ExtractResult(&result)
+	res := CheckpointsResponse{}
+	err = responseResult.ExtractResult(&res)
 	if err != nil {
 		return nil, responseResult, err
 	}
 
-	return result.Result, responseResult, nil
+	return &res, responseResult, nil
 }

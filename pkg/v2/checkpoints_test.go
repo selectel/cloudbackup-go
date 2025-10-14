@@ -33,45 +33,49 @@ func TestServiceClient_Checkpoints(t *testing.T) {
 						"type": "volume"
 					}
 				}]
-			}]
+			}],
+			"total": 1
 		}`
 		fakeResp := httptest.NewFakeResponse(200, body) //nolint:bodyclose
 		fakeTransport := httptest.NewFakeTransport(fakeResp, nil)
 		client := newFakeClient("http://fake", fakeTransport)
 
 		// Execute
-		checkpoints, respRes, err := client.Checkpoints(context.Background(), &CheckpointsQuery{PlanName: "test-plan", VolumeName: "test-volume"})
+		res, respRes, err := client.Checkpoints(context.Background(), &CheckpointsQuery{PlanName: "test-plan", VolumeName: "test-volume"})
 
 		// Analyse
 		require.NoError(t, err)
 		require.NotNil(t, respRes)
 		require.Equal(t, 200, respRes.StatusCode)
-		wantCheckpoints := []*Checkpoint{
-			{
-				ID:        "checkpoint-id-1",
-				PlanID:    "plan-id-1",
-				CreatedAt: "2023-02-01T00:00:00Z",
-				Status:    "completed",
-				CheckpointItems: []CheckpointItem{
-					{
-						ID:              "item-id-1",
-						BackupID:        "backup-id-1",
-						ChainID:         "chain-id-1",
-						CheckpointID:    "checkpoint-id-1",
-						CreatedAt:       "2023-02-01T00:01:00Z",
-						BackupCreatedAt: "2023-02-01T00:01:00Z",
-						IsIncremental:   false,
-						Status:          "available",
-						Resource: CheckpointResource{
-							ID:   "resource-id-1",
-							Name: "resource-name-1",
-							Type: "volume",
+		want := &CheckpointsResponse{
+			Checkpoints: []*Checkpoint{
+				{
+					ID:        "checkpoint-id-1",
+					PlanID:    "plan-id-1",
+					CreatedAt: "2023-02-01T00:00:00Z",
+					Status:    "completed",
+					CheckpointItems: []CheckpointItem{
+						{
+							ID:              "item-id-1",
+							BackupID:        "backup-id-1",
+							ChainID:         "chain-id-1",
+							CheckpointID:    "checkpoint-id-1",
+							CreatedAt:       "2023-02-01T00:01:00Z",
+							BackupCreatedAt: "2023-02-01T00:01:00Z",
+							IsIncremental:   false,
+							Status:          "available",
+							Resource: CheckpointResource{
+								ID:   "resource-id-1",
+								Name: "resource-name-1",
+								Type: "volume",
+							},
 						},
 					},
 				},
 			},
+			Total: 1,
 		}
-		require.Equal(t, wantCheckpoints, checkpoints)
+		require.Equal(t, want, res)
 	})
 
 	t.Run("SuccessWithoutQuery", func(t *testing.T) {
@@ -83,29 +87,33 @@ func TestServiceClient_Checkpoints(t *testing.T) {
 				"created_at": "2023-02-01T00:00:00Z",
 				"status": "completed",
 				"checkpoint_items": []
-			}]
+			}],
+			"total": 1
 		}`
 		fakeResp := httptest.NewFakeResponse(200, body) //nolint:bodyclose
 		fakeTransport := httptest.NewFakeTransport(fakeResp, nil)
 		client := newFakeClient("http://fake", fakeTransport)
 
 		// Execute
-		checkpoints, respRes, err := client.Checkpoints(context.Background(), nil)
+		res, respRes, err := client.Checkpoints(context.Background(), nil)
 
 		// Analyse
 		require.NoError(t, err)
 		require.NotNil(t, respRes)
 		require.Equal(t, 200, respRes.StatusCode)
-		wantCheckpoints := []*Checkpoint{
-			{
-				ID:              "checkpoint-id-1",
-				PlanID:          "plan-id-1",
-				CreatedAt:       "2023-02-01T00:00:00Z",
-				Status:          "completed",
-				CheckpointItems: []CheckpointItem{},
+		want := &CheckpointsResponse{
+			Checkpoints: []*Checkpoint{
+				{
+					ID:              "checkpoint-id-1",
+					PlanID:          "plan-id-1",
+					CreatedAt:       "2023-02-01T00:00:00Z",
+					Status:          "completed",
+					CheckpointItems: []CheckpointItem{},
+				},
 			},
+			Total: 1,
 		}
-		require.Equal(t, wantCheckpoints, checkpoints)
+		require.Equal(t, want, res)
 	})
 
 	t.Run("InvalidJSON", func(t *testing.T) {
@@ -116,11 +124,11 @@ func TestServiceClient_Checkpoints(t *testing.T) {
 		client := newFakeClient("http://fake", fakeTransport)
 
 		// Execute
-		checkpoints, respRes, err := client.Checkpoints(context.Background(), nil)
+		res, respRes, err := client.Checkpoints(context.Background(), nil)
 
 		// Analyse
 		require.Error(t, err)
-		require.Nil(t, checkpoints)
+		require.Nil(t, res)
 		require.NotNil(t, respRes)
 		require.Equal(t, 200, respRes.StatusCode)
 	})
@@ -132,13 +140,13 @@ func TestServiceClient_Checkpoints(t *testing.T) {
 		client := newFakeClient("http://fake", httptest.NewFakeTransport(fakeResp, nil))
 
 		// Execute
-		checkpoints, respRes, err := client.Checkpoints(context.Background(), nil)
+		res, respRes, err := client.Checkpoints(context.Background(), nil)
 
 		// Analyse
 		require.Error(t, err)
 		require.NotNil(t, respRes)
 		require.NotNil(t, respRes.Err)
-		require.Nil(t, checkpoints)
+		require.Nil(t, res)
 		require.EqualError(t, respRes.Err, httpErrorMessage)
 	})
 
@@ -148,11 +156,11 @@ func TestServiceClient_Checkpoints(t *testing.T) {
 		client := newFakeClient("http://fake", fakeTransport)
 
 		// Execute
-		checkpoints, respRes, err := client.Checkpoints(context.Background(), nil)
+		res, respRes, err := client.Checkpoints(context.Background(), nil)
 
 		// Analyse
 		require.Error(t, err)
-		require.Nil(t, checkpoints)
+		require.Nil(t, res)
 		require.Nil(t, respRes)
 	})
 }
