@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 )
 
 type (
@@ -37,6 +38,8 @@ type (
 	CheckpointsQuery struct {
 		PlanName   string
 		VolumeName string
+		Limit      int
+		Marker     string
 	}
 
 	CheckpointsResponse struct {
@@ -57,6 +60,14 @@ func (q *CheckpointsQuery) queryParamsRaw() string {
 
 	if q.VolumeName != "" {
 		params.Add("volume_name", q.VolumeName)
+	}
+
+	if q.Limit != 0 {
+		params.Add("limit", strconv.Itoa(q.Limit))
+	}
+
+	if q.Marker != "" {
+		params.Add("marker", q.Marker)
 	}
 
 	return params.Encode()
