@@ -47,7 +47,6 @@ func TestServiceClient_Plans(t *testing.T) {
 				{
 					ID:                "plan-id-1",
 					Name:              "test-plan",
-					Description:       "test description",
 					BackupMode:        "full",
 					FullBackupsAmount: 5,
 					SchedulePattern:   "0 0 * * *",
@@ -105,7 +104,6 @@ func TestServiceClient_Plans(t *testing.T) {
 				{
 					ID:                "plan-id-1",
 					Name:              "test-plan",
-					Description:       "test description",
 					BackupMode:        "full",
 					FullBackupsAmount: 5,
 					SchedulePattern:   "0 0 * * *",
@@ -208,7 +206,6 @@ func TestServiceClient_Plan(t *testing.T) {
 		wantPlan := &Plan{
 			ID:                "plan-id-1",
 			Name:              "test-plan",
-			Description:       "test description",
 			BackupMode:        "full",
 			FullBackupsAmount: 5,
 			SchedulePattern:   "0 0 * * *",
@@ -300,7 +297,6 @@ func TestServiceClient_PlanCreate(t *testing.T) {
 
 		createReq := &Plan{
 			Name:              "test-plan",
-			Description:       "test description",
 			BackupMode:        "full",
 			FullBackupsAmount: 5,
 			SchedulePattern:   "0 0 * * *",
@@ -322,7 +318,6 @@ func TestServiceClient_PlanCreate(t *testing.T) {
 		wantPlan := &Plan{
 			ID:                "plan-id-1",
 			Name:              "test-plan",
-			Description:       "test description",
 			BackupMode:        "full",
 			FullBackupsAmount: 5,
 			SchedulePattern:   "0 0 * * *",
@@ -414,7 +409,6 @@ func TestServiceClient_PlanUpdate(t *testing.T) {
 
 		updateReq := &PlanUpdateRequest{
 			Name:              "updated-plan-name",
-			Description:       "updated description",
 			FullBackupsAmount: 10,
 			SchedulePattern:   "0 2 * * *",
 		}
@@ -429,7 +423,6 @@ func TestServiceClient_PlanUpdate(t *testing.T) {
 		wantPlan := &Plan{
 			ID:                "plan-id-1",
 			Name:              "updated-plan-name",
-			Description:       "updated description",
 			BackupMode:        "full",
 			FullBackupsAmount: 10,
 			SchedulePattern:   "0 2 * * *",
