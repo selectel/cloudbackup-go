@@ -4,7 +4,6 @@ type (
 	Plan struct {
 		BackupMode        string          `json:"backup_mode"`
 		CreatedAt         string          `json:"created_at,omitempty"`
-		Description       string          `json:"description"`
 		ID                string          `json:"id,omitempty"`
 		FullBackupsAmount int             `json:"full_backups_amount"`
 		Name              string          `json:"name"`
@@ -30,3 +29,11 @@ const (
 	PlanStatusStarted   = "started"
 	PlanStatusSuspended = "suspended"
 )
+
+type PlanUpdateRequest struct {
+	FullBackupsAmount int             `json:"full_backups_amount"`
+	Name              string          `json:"name"`
+	Resources         []*PlanResource `json:"resources"`
+	SchedulePattern   string          `json:"schedule_pattern"`
+	ScheduleType      string          `json:"schedule_type"`
+}

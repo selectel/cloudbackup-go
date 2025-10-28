@@ -112,7 +112,7 @@ func (client *ServiceClient) PlanCreate(ctx context.Context, req *Plan) (*Plan, 
 	return result, responseResult, nil
 }
 
-func (client *ServiceClient) PlanUpdate(ctx context.Context, planID string, req *Plan) (*Plan, *ResponseResult, error) {
+func (client *ServiceClient) PlanUpdate(ctx context.Context, planID string, req *PlanUpdateRequest) (*Plan, *ResponseResult, error) {
 	u := fmt.Sprintf("%s/plans/%s", client.Endpoint, planID)
 
 	body, err := json.Marshal(req)
