@@ -412,7 +412,7 @@ func TestServiceClient_PlanUpdate(t *testing.T) {
 		fakeTransport := httptest.NewFakeTransport(fakeResp, nil)
 		client := newFakeClient("http://fake", fakeTransport)
 
-		updateReq := &Plan{
+		updateReq := &PlanUpdateRequest{
 			Name:              "updated-plan-name",
 			Description:       "updated description",
 			FullBackupsAmount: 10,
@@ -455,7 +455,7 @@ func TestServiceClient_PlanUpdate(t *testing.T) {
 		client := newFakeClient("http://fake", fakeTransport)
 
 		// Execute
-		plan, respRes, err := client.PlanUpdate(context.Background(), "plan-id-1", &Plan{})
+		plan, respRes, err := client.PlanUpdate(context.Background(), "plan-id-1", &PlanUpdateRequest{})
 
 		// Analyse
 		require.Error(t, err)
@@ -471,7 +471,7 @@ func TestServiceClient_PlanUpdate(t *testing.T) {
 		client := newFakeClient("http://fake", httptest.NewFakeTransport(fakeResp, nil))
 
 		// Execute
-		plan, respRes, err := client.PlanUpdate(context.Background(), "plan-id-1", &Plan{})
+		plan, respRes, err := client.PlanUpdate(context.Background(), "plan-id-1", &PlanUpdateRequest{})
 
 		// Analyse
 		require.Error(t, err)
@@ -487,7 +487,7 @@ func TestServiceClient_PlanUpdate(t *testing.T) {
 		client := newFakeClient("http://fake", fakeTransport)
 
 		// Execute
-		plan, respRes, err := client.PlanUpdate(context.Background(), "plan-id-1", &Plan{})
+		plan, respRes, err := client.PlanUpdate(context.Background(), "plan-id-1", &PlanUpdateRequest{})
 
 		// Analyse
 		require.Error(t, err)
